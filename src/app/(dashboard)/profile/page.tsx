@@ -10,20 +10,19 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import DonateBlood from "@/components/views/dashBoard/DonateBlood";
-import { useSinglePatientQuery } from "@/redux/api/patientApi";
+
 import { CalendarDays, Check, Mail, MapPin, Phone } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function Profile() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  //   console.log(session);
-  //   const { userId } = session;
-  const { data: profileData } = useSinglePatientQuery(session?.userId);
-  console.log(profileData);
+  // const { data: session, status } = useSession();
+  // const router = useRouter();
+  // //   console.log(session);
+  // //   const { userId } = session;
+  // const { data: profileData } = useSinglePatientQuery(session?.userId);
+  // console.log(profileData);
 
   // if (!profileData) {
   //   router.push("/login")

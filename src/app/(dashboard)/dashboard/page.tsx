@@ -1,9 +1,7 @@
-import DashboardPreview from "@/components/views/dashBoard/DashboardPreview"
+import React from "react";
 
 const Dashboard = () => {
-    return (
-        <DashboardPreview />
-    )
-}
+  return <div>Dashboard</div>;
+};
 
-export default Dashboard
+export default Dashboard;

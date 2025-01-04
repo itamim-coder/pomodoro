@@ -7,7 +7,7 @@ export default function MobileNav() {
         <div className="fixed bottom-0 left-0 z-50 w-full bg-background shadow-2xl lg:hidden">
             <nav className="flex justify-around py-2">
                 {
-                    mobileNavMenus.map((item) => (
+                    navMenus.map((item) => (
                         <Link
                             key={item.id}
                             href={item.url}

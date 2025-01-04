@@ -10,8 +10,8 @@ const josefinSans = Josefin_Sans({
 })
 
 export const metadata: Metadata = {
-  title: "Moynaa",
-  description: "Connecting You To Trusted Care",
+  title: "Pomodoro",
+  description: "",
 };
 
 export default function RootLayout({
@@ -20,6 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    
     <Providers>
       <html lang="en" suppressHydrationWarning>
         <body
