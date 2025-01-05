@@ -15,16 +15,9 @@ const navMenus = [
   },
   {
     id: 2,
-    name: "Focus",
-    url: "/focus",
+    name: "Timer",
+    url: "/timer",
     icon: <UsersRound className="w-6 h-6" />,
-  },
-
-  {
-    id: 3,
-    name: "Profile",
-    url: "/profile",
-    icon: <UserIcon className="w-6 h-6" />,
   },
 ];
 

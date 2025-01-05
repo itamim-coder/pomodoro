@@ -12,11 +12,14 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 import { useAppDispatch } from "@/redux/hooks";
 import { logout } from "@/redux/features/auth/authSlice";
+import { useRouter } from "next/navigation";
 
 const ProfileButton = () => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const handleLogOut = () => {
     dispatch(logout());
+    router.push("/");
   };
   return (
     <DropdownMenu>

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -13,50 +12,47 @@ import {
   resetTimer,
   startTimer,
 } from "@/redux/features/timerSlice";
+import { selectCurrentUser } from "@/redux/features/auth/authSlice";
+import {
+  useGetFocusMetricsQuery,
+  useGetStreaksQuery,
+  usePostFocusSessionMutation,
+} from "@/redux/features/session/sessionApi";
 
 const PomodoroTimer = () => {
   const dispatch = useAppDispatch();
   const { seconds, isActive, isFocus } = useAppSelector((state) => state.timer);
-
+  const user = useAppSelector(selectCurrentUser);
   const [streakData, setStreakData] = useState({
     currentStreak: 0,
     longestStreak: 0,
     badges: [],
   });
-  const userId = "1"; // Replace with your actual user ID
-  console.log(streakData);
-  // Fetch streak and badges data on component mount
-  useEffect(() => {
-    const fetchStreakData = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5000/api/v1/session/streaks/${userId}`
-        );
-        setStreakData(response.data);
-      } catch (error) {
-        console.error("Failed to fetch streak data:", error);
-      }
-    };
-
-    fetchStreakData();
-  }, [userId]);
+  const { data: userStreak, isLoading } = useGetStreaksQuery(undefined);
+  const { data: focusMetrics } = useGetFocusMetricsQuery(undefined);
+  const userId = user?.userId; // Replace with actual user ID
+  const [postFocusSession] = usePostFocusSessionMutation();
 
   // Handle session completion and logging
   useEffect(() => {
     let timer: NodeJS.Timeout;
+
     const logFocusSession = async () => {
-      const duration = isFocus ? 10 : 3; // Replace with actual session lengths
+      const duration = 1 * 60; // Set duration to 1 minute (60 seconds)
       const sessionType = isFocus ? "focus" : "break";
 
       try {
-        await axios.post(`http://localhost:5000/api/v1/session/focus-session`, {
+        const data = {
           userId,
-          duration,
+          duration, // Store the duration in seconds (1 min)
           sessionType,
-        });
-        // Optionally refetch streak data after logging a session
-        const response = await axios.get(`/streaks`, { params: { userId } });
-        setStreakData(response.data);
+        };
+
+        // If you need to dispatch some API call or log, you can re-enable below
+        const res = await postFocusSession(data).unwrap();
+        console.log(res, "timer");
+
+        setStreakData(userStreak); // Optional: can refactor this if needed after session completion
       } catch (error) {
         console.error("Failed to log focus session:", error);
       }
@@ -67,66 +63,99 @@ const PomodoroTimer = () => {
         if (seconds > 0) {
           dispatch(decrementTime());
         } else {
-          dispatch(completeSession());
-          logFocusSession();
+          dispatch(completeSession()); // Ends session
+          logFocusSession(); // Log session when completed
         }
       }, 1000);
     } else {
-      clearInterval(timer);
+      clearInterval(timer); // Pause the interval when not active
     }
 
-    return () => clearInterval(timer);
-  }, [isActive, seconds, dispatch, isFocus, userId]);
+    return () => clearInterval(timer); // Cleanup the interval after useEffect is done
+  }, [isActive, seconds, dispatch, isFocus, userId, userStreak]);
+
+  // Play sound or display visual cue when session ends
+  useEffect(() => {
+    if (seconds === 0) {
+      const audio = new Audio("/success.mp3"); // Keep your sound file in the public folder
+
+      const playAudio = () => audio.play();
+
+      if (audio) {
+        audio.addEventListener("canplaythrough", playAudio, { once: true });
+      }
+      audio.play().catch((error) => {
+        console.log("Audio playback failed:", error); // To handle errors like autoplay restrictions
+      });
+    }
+  }, [seconds, isFocus]);
+
+  // Timer display and session types (Focus/Break)
+  const formattedTime = `${Math.floor(seconds / 60)}:${
+    seconds % 60 < 10 ? "0" : ""
+  }${seconds % 60}`;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 place-items-center pt-5 lg:pt-28 pb-4 lg:pb-16">
-      <Card className="w-full md:w-1/2 mx-auto p-4">
-        <h3 className="text-center mb-2">
+    <div className="w-full h-screen flex flex-col justify-center items-center bg-gradient-to-b from-blue-300 to-purple-400 p-4">
+      {/* Timer Card */}
+      <Card className="w-full max-w-lg p-8 rounded-xl shadow-lg bg-white bg-opacity-80">
+        <h3 className="text-center text-xl font-semibold mb-4">
           {isFocus ? "Focus Time" : "Break Time"}
         </h3>
-        <h3 className="text-center mb-4">
-          {Math.floor(seconds / 60)}:{seconds % 60 < 10 ? "0" : ""}
-          {seconds % 60}
-        </h3>
+        <h3 className="text-center text-3xl font-bold mb-6">{formattedTime}</h3>
+
         <Progress
-          value={(1 - seconds / (isFocus ? 1500 : 300)) * 100}
-          className="mb-4"
+          value={(1 - seconds / 60) * 100} // Calculate progress based on 60 seconds
+          className="mb-6 h-2 bg-indigo-500 rounded-full"
         />
-        <div className="flex gap-4 justify-center">
-          <Button variant="primary" onClick={() => dispatch(startTimer())}>
-            Start
+        <div className="flex justify-around gap-4 mb-6">
+          <Button
+            variant="primary"
+            onClick={() => {
+              if (!isActive) {
+                dispatch(startTimer());
+              } else {
+                dispatch(pauseTimer());
+              }
+            }}
+            className={`border-2 ${
+              isActive ? "border-yellow-500" : "border-green-500"
+            }`}
+          >
+            {isActive ? "Pause" : "Start"}
           </Button>
-          <Button variant="secondary" onClick={() => dispatch(pauseTimer())}>
-            Pause
-          </Button>
-          <Button variant="danger" onClick={() => dispatch(resetTimer())}>
+
+          <Button
+            className="border border-red-400"
+            variant="danger"
+            onClick={() => dispatch(resetTimer())}
+          >
             Reset
           </Button>
         </div>
 
         {/* Streak Data */}
-        <div className="mt-6 text-center">
-          <h4>Current Streak: {streakData?.data?.currentStreak}</h4>
-          <h4>Longest Streak: {streakData?.data?.longestStreak}</h4>
+        <div className="mt-4 text-center">
+          <h4 className="text-lg">
+            Current Streak:{" "}
+            <span className="font-bold">{userStreak?.currentStreak}</span>
+          </h4>
+          <h4 className="text-lg">
+            Longest Streak:{" "}
+            <span className="font-bold">{userStreak?.longestStreak}</span>
+          </h4>
+          <h4 className="text-lg">
+            Today's Sessions:{" "}
+            <span className="font-bold">
+              {focusMetrics?.dailyMetrics[0]?.sessionCount}
+            </span>
+          </h4>
         </div>
 
-        {/* Badges */}
+        {/* Badges Section */}
         <div className="mt-6">
-          <h4 className="text-center mb-2">Achievements</h4>
-          <div className="flex flex-wrap justify-center gap-2">
-            {streakData?.badges?.length > 0 ? (
-              streakData?.badges?.map((badge, index) => (
-                <span
-                  key={index}
-                  className="bg-blue-500 text-white px-3 py-1 rounded"
-                >
-                  {badge}
-                </span>
-              ))
-            ) : (
-              <p className="text-gray-500 text-center">No badges earned yet.</p>
-            )}
-          </div>
+      
+
         </div>
       </Card>
     </div>

@@ -85,7 +85,7 @@ export default function DashboardLayout({
               <SheetHeader>
                 <SheetTitle>
                   <h1 className="text-sm lg:text-lg font-semibold">
-                    Patient Dashboard
+                    Student Dashboard
                   </h1>
                 </SheetTitle>
                 <SheetDescription>
@@ -95,7 +95,7 @@ export default function DashboardLayout({
             </SheetContent>
           </Sheet>
           <div className="items-center gap-4 hidden lg:flex">
-            <h1 className="text-lg font-semibold">Patient Dashboard</h1>
+            <h1 className="text-lg font-semibold">Student Dashboard</h1>
           </div>
           <div className="flex items-center gap-4">
             <ProfileButton />
@@ -108,57 +108,6 @@ export default function DashboardLayout({
                   </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80">
-                <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-                      <CalendarIcon className="h-5 w-5 text-muted-foreground" />
-                    </div>
-                    <div className="flex-1 space-y-1">
-                      <p className="font-medium">Upcoming Appointment</p>
-                      <p className="text-sm text-muted-foreground">
-                        You have an appointment with Dr. Smith on May 15th at
-                        2:00 PM.
-                      </p>
-                    </div>
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-                      <FileTextIcon className="h-5 w-5 text-muted-foreground" />
-                    </div>
-                    <div className="flex-1 space-y-1">
-                      <p className="font-medium">New Medical Record</p>
-                      <p className="text-sm text-muted-foreground">
-                        A new medical record has been added to your file.
-                      </p>
-                    </div>
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-                      <ClipboardIcon className="h-5 w-5 text-muted-foreground" />
-                    </div>
-                    <div className="flex-1 space-y-1">
-                      <p className="font-medium">Prescription Refill</p>
-                      <p className="text-sm text-muted-foreground">
-                        Your prescription for Amoxicillin is ready for refill.
-                      </p>
-                    </div>
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <div className="flex items-center justify-between">
-                    <span>View all notifications</span>
-                    <ChevronRightIcon className="h-4 w-4" />
-                  </div>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </header>
