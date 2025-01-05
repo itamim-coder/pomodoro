@@ -26,7 +26,7 @@ const ProfileButton = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="rounded-full">
           <img
-            src="/placeholder.svg"
+            src="https://github.com/shadcn.png"
             width="32"
             height="32"
             className="rounded-full"

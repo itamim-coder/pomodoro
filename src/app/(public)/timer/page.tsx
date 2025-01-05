@@ -11,7 +11,7 @@ import {
   pauseTimer,
   resetTimer,
   startTimer,
-} from "@/redux/features/timerSlice";
+} from "@/redux/features/timer/timerSlice";
 import { selectCurrentUser } from "@/redux/features/auth/authSlice";
 import {
   useGetFocusMetricsQuery,
@@ -49,8 +49,10 @@ const PomodoroTimer = () => {
         };
 
         // If you need to dispatch some API call or log, you can re-enable below
-        const res = await postFocusSession(data).unwrap();
-        console.log(res, "timer");
+        if (sessionType === "focus") {
+          const res = await postFocusSession(data).unwrap();
+          console.log(res, "timer");
+        }
 
         setStreakData(userStreak); // Optional: can refactor this if needed after session completion
       } catch (error) {
@@ -153,10 +155,7 @@ const PomodoroTimer = () => {
         </div>
 
         {/* Badges Section */}
-        <div className="mt-6">
-      
-
-        </div>
+        <div className="mt-6"></div>
       </Card>
     </div>
   );

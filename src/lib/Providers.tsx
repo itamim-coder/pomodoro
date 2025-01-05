@@ -10,9 +10,9 @@ const Providers = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <SessionProvider>
+  
       <Provider store={store}>{children}</Provider>
-    </SessionProvider>
+   
   );
 };
 

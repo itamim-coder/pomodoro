@@ -1,6 +1,6 @@
 import { persistReducer } from "redux-persist";
 
-import timerReducer from "./features/timerSlice";
+import timerReducer from "./features/timer/timerSlice";
 import authReducer from "./features/auth/authSlice";
 import { baseApi } from "./api/baseApi";
 import storage from "redux-persist/lib/storage";
