@@ -12,7 +12,7 @@ interface TimerState {
 }
 
 const initialState: TimerState = {
-  seconds: 60, // 25 minutes for Focus session
+  seconds: 1500, // 25 minutes for Focus session
   isActive: false,
   isFocus: true,
   sessionCount: 0,
@@ -43,7 +43,7 @@ const timerSlice = createSlice({
     completeSession(state) {
       state.isActive = false;
       state.isFocus = !state.isFocus; // Toggle between Focus and Break
-      state.seconds = state.isFocus ? 60 : 3;
+      state.seconds = state.isFocus ? 1500 : 300;
 
       if (!state.isFocus) {
         state.sessionCount += 1;

@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+
 import {
   completeSession,
   decrementTime,
@@ -18,43 +18,32 @@ import {
   useGetStreaksQuery,
   usePostFocusSessionMutation,
 } from "@/redux/features/session/sessionApi";
+import ProgressBar from "@/components/views/progressBar";
 
 const PomodoroTimer = () => {
   const dispatch = useAppDispatch();
   const { seconds, isActive, isFocus } = useAppSelector((state) => state.timer);
   const user = useAppSelector(selectCurrentUser);
-  const [streakData, setStreakData] = useState({
-    currentStreak: 0,
-    longestStreak: 0,
-    badges: [],
-  });
-  const { data: userStreak, isLoading } = useGetStreaksQuery(undefined);
-  const { data: focusMetrics } = useGetFocusMetricsQuery(undefined);
-  const userId = user?.userId; // Replace with actual user ID
   const [postFocusSession] = usePostFocusSessionMutation();
 
-  // Handle session completion and logging
+  const { data: userStreak } = useGetStreaksQuery(undefined);
+  const { data: focusMetrics } = useGetFocusMetricsQuery(undefined);
+
+  const userId = user?.userId;
+  const sessionDuration = 1500; // 25 minutes in seconds
+
+  // Timer management logic
   useEffect(() => {
     let timer: NodeJS.Timeout;
 
     const logFocusSession = async () => {
-      const duration = 1 * 60; // Set duration to 1 minute (60 seconds)
       const sessionType = isFocus ? "focus" : "break";
 
       try {
-        const data = {
-          userId,
-          duration, // Store the duration in seconds (1 min)
-          sessionType,
-        };
-
-        // If you need to dispatch some API call or log, you can re-enable below
+        const data = { userId, duration: sessionDuration, sessionType };
         if (sessionType === "focus") {
-          const res = await postFocusSession(data).unwrap();
-          console.log(res, "timer");
+          await postFocusSession(data).unwrap();
         }
-
-        setStreakData(userStreak); // Optional: can refactor this if needed after session completion
       } catch (error) {
         console.error("Failed to log focus session:", error);
       }
@@ -65,51 +54,44 @@ const PomodoroTimer = () => {
         if (seconds > 0) {
           dispatch(decrementTime());
         } else {
-          dispatch(completeSession()); // Ends session
-          logFocusSession(); // Log session when completed
+          dispatch(completeSession());
+          logFocusSession();
         }
       }, 1000);
     } else {
-      clearInterval(timer); // Pause the interval when not active
+      clearInterval(timer);
     }
 
-    return () => clearInterval(timer); // Cleanup the interval after useEffect is done
-  }, [isActive, seconds, dispatch, isFocus, userId, userStreak]);
+    return () => clearInterval(timer);
+  }, [isActive, seconds, dispatch, isFocus, userId]);
 
-  // Play sound or display visual cue when session ends
+  // Play sound/visual cue when timer ends
   useEffect(() => {
     if (seconds === 0) {
-      const audio = new Audio("/success.mp3"); // Keep your sound file in the public folder
-
-      const playAudio = () => audio.play();
-
-      if (audio) {
-        audio.addEventListener("canplaythrough", playAudio, { once: true });
-      }
-      audio.play().catch((error) => {
-        console.log("Audio playback failed:", error); // To handle errors like autoplay restrictions
-      });
+      const audio = new Audio("/success.mp3");
+      audio.play().catch((error) => console.error("Audio playback error:", error));
     }
-  }, [seconds, isFocus]);
+  }, [seconds]);
 
-  // Timer display and session types (Focus/Break)
   const formattedTime = `${Math.floor(seconds / 60)}:${
     seconds % 60 < 10 ? "0" : ""
   }${seconds % 60}`;
 
   return (
     <div className="w-full h-screen flex flex-col justify-center items-center bg-gradient-to-b from-blue-300 to-purple-400 p-4">
-      {/* Timer Card */}
       <Card className="w-full max-w-lg p-8 rounded-xl shadow-lg bg-white bg-opacity-80">
         <h3 className="text-center text-xl font-semibold mb-4">
           {isFocus ? "Focus Time" : "Break Time"}
         </h3>
         <h3 className="text-center text-3xl font-bold mb-6">{formattedTime}</h3>
 
-        <Progress
-          value={(1 - seconds / 60) * 100} // Calculate progress based on 60 seconds
+        {/* Dynamic ProgressBar Component */}
+        <ProgressBar
+          current={sessionDuration - seconds}
+          milestone={sessionDuration}
           className="mb-6 h-2 bg-indigo-500 rounded-full"
         />
+
         <div className="flex justify-around gap-4 mb-6">
           <Button
             variant="primary"
@@ -136,7 +118,7 @@ const PomodoroTimer = () => {
           </Button>
         </div>
 
-        {/* Streak Data */}
+        {/* Streak and Focus Data */}
         <div className="mt-4 text-center">
           <h4 className="text-lg">
             Current Streak:{" "}
@@ -153,9 +135,6 @@ const PomodoroTimer = () => {
             </span>
           </h4>
         </div>
-
-        {/* Badges Section */}
-        <div className="mt-6"></div>
       </Card>
     </div>
   );

@@ -11,7 +11,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ current, milestone }) => {
 
   return (
     <div className="my-4">
-      <h3>{`Progress: ${current}/${milestone}`}</h3>
+      {/* <h3>{`Progress: ${current}/${milestone}`}</h3> */}
       <Progress value={percentage} className="mt-2" />
     </div>
   );

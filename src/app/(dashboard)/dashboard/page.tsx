@@ -50,9 +50,7 @@ const FocusDashboard = () => {
 
   return (
     <div className="w-full max-w-7xl mx-auto p-4">
-      <h3 className="text-center text-xl font-semibold mb-4">
-        Focus Dashboard
-      </h3>
+ 
 
       {/* First Section: Full-width cards for streak, message, badges */}
       <div className="grid shadow-md p-6 rounded-md grid-cols-1 md:grid-cols-3 gap-6 mb-6">
