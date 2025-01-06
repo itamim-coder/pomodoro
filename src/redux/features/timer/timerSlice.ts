@@ -33,7 +33,11 @@ const timerSlice = createSlice({
     },
     resetTimer(state) {
       state.isActive = false;
-      state.seconds = state.isFocus ? 60 : 3; // Reset to focus or break time
+      state.seconds = state.isFocus ? 1500 : 300; // Reset to focus or break time
+    },
+    skipTimer(state) {
+      state.isActive = false;
+      state.seconds = state.isFocus ? 30 : 10; // Reset to focus or break time
     },
     decrementTime(state) {
       if (state.seconds > 0) {
@@ -72,6 +76,7 @@ export const {
   startTimer,
   pauseTimer,
   resetTimer,
+  skipTimer,
   decrementTime,
   completeSession,
   resetStreak,

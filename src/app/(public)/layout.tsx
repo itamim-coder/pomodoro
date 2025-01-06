@@ -1,11 +1,10 @@
-"use client"
+"use client";
 
-import Footer from "@/components/views/landingPage/Footer";
 import MobileNav from "@/components/views/landingPage/MobileNav";
 import MobileTopBar from "@/components/views/landingPage/MobileTopBar";
 import Navbar from "@/components/views/landingPage/Navbar";
 import { useCurrentToken } from "@/redux/features/auth/authSlice";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppSelector } from "@/redux/hooks";
 import { verifyToken } from "@/utils/verifyToken";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -16,21 +15,33 @@ export default function PublicLayout({
   children: React.ReactNode;
 }>) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(true);
   const token = useAppSelector(useCurrentToken);
-  const dispatch = useAppDispatch();
-  let user;
 
   useEffect(() => {
-    if (token) {
-      user = verifyToken(token);
+    // Early guard clause for missing token
+    if (!token) {
+      router.push("/login");
+      return;
     }
+
+    // Verify the token and decide access
+    const user = verifyToken(token);
     if (!user) {
-      // removeUserInfo(authKey);
-      return router.push("/login");
+      router.push("/login");
+    } else {
+      setIsLoading(false); // Ensure the layout renders once verified
     }
-    setIsLoading(true);
-  }, [router, isLoading]);
+  }, [token, router]);
+
+  if (isLoading) {
+    return (
+      <div className="h-screen flex justify-center items-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <>
       <main className="container mx-auto px-4 md:px-6 lg:px-8 bg-gradient-to-r from-background to-muted pb-20">

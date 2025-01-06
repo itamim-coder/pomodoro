@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
-import { useAppSelector } from "@/redux/hooks";
-import { Card } from "@/components/ui/card";
+
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -10,7 +9,6 @@ import {
   useGetStreaksQuery,
 } from "@/redux/features/session/sessionApi";
 import { BarCharts } from "@/components/views/Charts/BarChart";
-import RadialChart from "@/components/views/Charts/RadialChart";
 
 const FocusDashboard = () => {
   // Fetch data from APIs
@@ -22,36 +20,19 @@ const FocusDashboard = () => {
     return <div>Loading...</div>;
   }
 
-  const todayMetrics = focusMetricsData.todayMetrics;
-  const weeklyMetrics = focusMetricsData.weeklyMetrics;
-  const overallMetrics = focusMetricsData.overallMetrics;
-  const dailyMetrics = focusMetricsData.dailyMetrics;
-  const badges = badgesData.map((badge) => badge.badgeName);
+  const todayMetrics = focusMetricsData?.todayMetrics;
+  const weeklyMetrics = focusMetricsData?.weeklyMetrics;
+  const overallMetrics = focusMetricsData?.overallMetrics;
+  const dailyMetrics = focusMetricsData?.dailyMetrics;
+  const badges = badgesData?.map(
+    (badge: { badgeName: any }) => badge?.badgeName
+  );
 
-  const streak = streakData.currentStreak;
-  const longestStreak = streakData.longestStreak;
-
-  const chartData = {
-    labels: dailyMetrics.map((metric: any) => metric.date),
-    datasets: [
-      {
-        label: "Focus Time (minutes)",
-        data: dailyMetrics.map((metric: any) => metric.totalFocusTime),
-        backgroundColor: "#4caf50",
-      },
-    ],
-  };
-
-  const formattedTime = (time: number) => {
-    const hours = Math.floor(time / 60);
-    const minutes = time % 60;
-    return `${hours}hr ${minutes}min`;
-  };
+  const streak = streakData?.currentStreak;
+  const longestStreak = streakData?.longestStreak;
 
   return (
     <div className="w-full max-w-7xl mx-auto p-4">
- 
-
       {/* First Section: Full-width cards for streak, message, badges */}
       <div className="grid shadow-md p-6 rounded-md grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         {/* Streak Progress */}
@@ -80,7 +61,7 @@ const FocusDashboard = () => {
         <div className="col-span-1 md:col-span-3">
           <h4 className="text-lg font-medium mb-2">Badges</h4>
           <div className="flex flex-wrap gap-4 mt-4">
-            {badges.map((badge, index) => (
+            {badges?.map((badge: any, index: string) => (
               <Badge key={index} color="info">
                 {badge}
               </Badge>
@@ -102,22 +83,22 @@ const FocusDashboard = () => {
           {/* Today's Metrics */}
           <div className="col-span-1">
             <h4 className="text-lg font-medium mb-2">Today's Metrics</h4>
-            <p>Total Focus Time: {todayMetrics.formattedFocusTime}</p>
-            <p>Sessions Completed: {todayMetrics.totalSessions}</p>
+            <p>Total Focus Time: {todayMetrics?.formattedFocusTime}</p>
+            <p>Sessions Completed: {todayMetrics?.totalSessions}</p>
           </div>
 
           {/* Weekly Metrics */}
           <div className="col-span-1">
             <h4 className="text-lg font-medium mb-2">Weekly Metrics</h4>
-            <p>Total Focus Time: {weeklyMetrics.totalFocusTime}</p>
-            <p>Sessions Completed: {weeklyMetrics.totalSessions}</p>
+            <p>Total Focus Time: {weeklyMetrics?.totalFocusTime}</p>
+            <p>Sessions Completed: {weeklyMetrics?.totalSessions}</p>
           </div>
 
           {/* Overall Metrics */}
           <div className="col-span-1">
             <h4 className="text-lg font-medium mb-2">Overall Metrics</h4>
-            <p>Total Focus Time: {overallMetrics.totalFocusTime}</p>
-            <p>Sessions Completed: {overallMetrics.totalSessions}</p>
+            <p>Total Focus Time: {overallMetrics?.totalFocusTime}</p>
+            <p>Sessions Completed: {overallMetrics?.totalSessions}</p>
             <p>Longest Streak: {longestStreak} days</p>
           </div>
         </div>

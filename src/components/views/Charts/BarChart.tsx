@@ -47,8 +47,7 @@ export function BarCharts() {
   return (
     <Card className="shadow-none border-none">
       <CardHeader>
-        <CardTitle>Daily Focus Time</CardTitle>
-        <CardDescription>Last 7 Days</CardDescription>
+            <CardDescription>Last 7 Days</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -76,14 +75,7 @@ export function BarCharts() {
           </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Trending up by 10% this week <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing daily focus time metrics for the past 7 days
-        </div>
-      </CardFooter>
+
     </Card>
   );
 }

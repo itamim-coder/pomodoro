@@ -5,19 +5,8 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import {
-  BellIcon,
-  CalendarIcon,
-  ChevronRightIcon,
-  ClipboardIcon,
-  FileTextIcon,
-  MenuIcon,
-} from "lucide-react";
+import { BellIcon, MenuIcon } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -41,11 +30,11 @@ export default function DashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const router = useRouter();
   const token = useAppSelector(useCurrentToken);
   const dispatch = useAppDispatch();
-  let user;
+  let user: any;
 
   useEffect(() => {
     if (token) {
